@@ -1,0 +1,13 @@
+{
+  "type" : "record",
+  "namespace" : "insurance.management.domain.insurances",
+  "name" : "InsuranceTest",
+  "fields" : [
+    {"name": "insuranceName", "type": "string"},
+    {"name": "insuranceMnemonic", "type": "string"},
+    {"name": "insuranceFeeAmount", "type": "string"},
+    {"name": "insurancesCoverages", "type": {
+      "type":"array", "items":"string"
+    }}
+  ]
+}

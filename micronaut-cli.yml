@@ -1,0 +1,5 @@
+profile: kafka
+defaultPackage: insurance.management
+---
+testFramework: junit
+sourceLanguage: java
