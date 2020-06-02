@@ -1,5 +1,7 @@
 package insurance.management.kafka.client;
 
+import static insurance.management.common.TopicsNames.CUSTOMER_TOPIC;
+
 import insurance.management.dto.domain.Customer;
 import io.micronaut.configuration.kafka.annotation.KafkaClient;
 import io.micronaut.configuration.kafka.annotation.KafkaKey;
@@ -10,6 +12,6 @@ import io.reactivex.Single;
 @KafkaClient("customer-producer")
 public interface CustomerKafkaClient {
 
-  @Topic("customer-management")
+  @Topic(CUSTOMER_TOPIC)
   Single<Customer> saveCustomer(@KafkaKey String key, @Body Customer customer);
 }

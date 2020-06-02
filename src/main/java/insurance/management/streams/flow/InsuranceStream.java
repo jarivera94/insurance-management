@@ -1,7 +1,14 @@
 package insurance.management.streams.flow;
 
+import static insurance.management.common.MaterializedOutputNames.CUSTOMER_GLOBAL_TABLE;
+import static insurance.management.common.MaterializedOutputNames.INSURANCES_GLOBAL_TABLE;
+import static insurance.management.common.StreamsNames.STREAM_ALL_INSURANCES;
+import static insurance.management.common.TopicsNames.CUSTOMER_TOPIC;
+import static insurance.management.common.TopicsNames.INSURANCE_TOPIC;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import insurance.management.dto.domain.Customer;
 import insurance.management.dto.domain.Insurance;
 import insurance.management.kafka.serde.Jackson2Serde;
 import io.micronaut.configuration.kafka.streams.ConfiguredStreamBuilder;
@@ -21,7 +28,6 @@ import org.apache.kafka.streams.state.KeyValueStore;
 @Factory
 public class InsuranceStream {
 
-  private static final String STREAM_ALL_INSURANCES = "insurance-all-stream";
   private static final ObjectMapper OBJECT_MAPPER =
       new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).findAndRegisterModules();
 
@@ -30,19 +36,27 @@ public class InsuranceStream {
   KafkaStreams viewInsurances(ConfiguredStreamBuilder builder) {
 
     Properties props = builder.getConfiguration();
+
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     Serde<Insurance> insuranceSerde = new Jackson2Serde<>(OBJECT_MAPPER, Insurance.class);
+    Serde<Customer> customerSerde = new Jackson2Serde<>(OBJECT_MAPPER, Customer.class);
 
-    final GlobalKTable<String, Insurance> table =
+    final GlobalKTable<String, Insurance> globalTableInsurance =
         builder.globalTable(
-            "insurances-topic",
+            INSURANCE_TOPIC,
             Materialized.<String, Insurance, KeyValueStore<Bytes, byte[]>>as(
-                    "insurances-global-table")
+                    INSURANCES_GLOBAL_TABLE)
                 .withKeySerde(Serdes.String())
                 .withValueSerde(insuranceSerde));
 
-
+    final GlobalKTable<String, Customer> globalTableCustomer =
+        builder.globalTable(
+            CUSTOMER_TOPIC,
+            Materialized.<String, Customer, KeyValueStore<Bytes, byte[]>>as(CUSTOMER_GLOBAL_TABLE)
+                .withKeySerde(Serdes.String())
+                .withValueSerde(customerSerde));
 
     return new KafkaStreams(builder.build(), props);
   }
+
 }

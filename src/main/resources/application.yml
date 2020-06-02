@@ -23,6 +23,10 @@ kafka:
 graphql:
   enabled: true
   path: /graphql
+  corsEnabled: true
+  websocket:
+    enabled: true
+    path: /graphql
   graphiql:
     enabled: true
     path: /graphiql

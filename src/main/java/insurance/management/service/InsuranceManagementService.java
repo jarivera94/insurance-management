@@ -1,5 +1,8 @@
 package insurance.management.service;
 
+import static insurance.management.common.MaterializedOutputNames.CUSTOMER_GLOBAL_TABLE;
+import static insurance.management.common.MaterializedOutputNames.INSURANCES_GLOBAL_TABLE;
+
 import insurance.management.dto.domain.Customer;
 import insurance.management.dto.domain.Insurance;
 import insurance.management.dto.input.CreateCustomerInput;
@@ -100,26 +103,46 @@ public class InsuranceManagementService {
                     error.getMessage()))
         .subscribe();
 
-
-
     return customer;
   }
 
-  @GraphQLQuery(name="retrieveInsurances")
-  public List<Insurance> getAllInsurances(){
-
+  @GraphQLQuery(name = "retrieveInsurances")
+  public List<Insurance> getAllInsurances() {
 
     final ReadOnlyKeyValueStore<String, Insurance> insurancesStore =
-        kafkaStreams.store("insurances-global-table", QueryableStoreTypes.<String, Insurance>keyValueStore());
-    log.info("InsuranceManagementService::getAllInsurances entries store {}", insurancesStore.approximateNumEntries());
-    ArrayList<Insurance> insuranceList = new ArrayList<>();
+        kafkaStreams.store(
+            INSURANCES_GLOBAL_TABLE, QueryableStoreTypes.<String, Insurance>keyValueStore());
+    log.info(
+        "InsuranceManagementService::getAllInsurances entries store {}",
+        insurancesStore.approximateNumEntries());
 
-    KeyValueIterator<String,Insurance> insurancesIterator = insurancesStore.all();
-    while (insurancesIterator.hasNext()){
-      KeyValue<String,Insurance> kv = insurancesIterator.next();
+    ArrayList<Insurance> insuranceList = new ArrayList<>();
+    KeyValueIterator<String, Insurance> insurancesIterator = insurancesStore.all();
+    while (insurancesIterator.hasNext()) {
+      KeyValue<String, Insurance> kv = insurancesIterator.next();
       log.info("InsuranceManagementService::getAllInsurances iterator with key {}", kv.key);
       insuranceList.add(kv.value);
     }
-    return  insuranceList;
+    return insuranceList;
+  }
+
+  @GraphQLQuery(name = "retrieveCustomers")
+  public List<Customer> getAllCustomers() {
+    final ReadOnlyKeyValueStore<String, Customer> customerStore =
+        kafkaStreams.store(
+            CUSTOMER_GLOBAL_TABLE, QueryableStoreTypes.<String, Customer>keyValueStore());
+
+    log.info(
+        "InsuranceManagementService::getAllCustomers entries store {}",
+        customerStore.approximateNumEntries());
+
+    ArrayList<Customer> customerList = new ArrayList<>();
+    KeyValueIterator<String, Customer> customerIterator = customerStore.all();
+    while (customerIterator.hasNext()) {
+      KeyValue<String, Customer> kv = customerIterator.next();
+      log.info("InsuranceManagementService::getAllCustomers iterator with key {}", kv.key);
+      customerList.add(kv.value);
+    }
+    return customerList;
   }
 }

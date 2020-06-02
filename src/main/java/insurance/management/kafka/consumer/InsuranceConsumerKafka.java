@@ -1,5 +1,7 @@
 package insurance.management.kafka.consumer;
 
+import static insurance.management.common.TopicsNames.INSURANCE_TOPIC;
+
 import insurance.management.dto.domain.Insurance;
 import io.micronaut.configuration.kafka.annotation.KafkaKey;
 import io.micronaut.configuration.kafka.annotation.KafkaListener;
@@ -10,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @KafkaListener("insurance-consumer")
 public class InsuranceConsumerKafka {
 
-  @Topic("insurances-topic")
+  @Topic(INSURANCE_TOPIC)
   public void receiveInsurance(
       @KafkaKey String key, Insurance insuranceSingle) {
     log.info("Got {} with key {}", insuranceSingle.getInsuranceName(), key);
