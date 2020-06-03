@@ -59,4 +59,6 @@ public class InsuranceStream {
     return new KafkaStreams(builder.build(), props);
   }
 
+  
+
 }
