@@ -12,11 +12,12 @@ kafka:
     consumers:
       insurance-consumer:
       customer-consumer:
+      sale-consumer:
   streams:
     insurance-all-stream:
-      client.id: insurances-client
-      application-id: micronaut-kafka-stream-insurances
-      group.id: insurances-group-id
+      client.id: insurances-managemet-client
+      application-id: micronaut-kafka-stream-insurances-management
+      group.id: insurances-management-group-id
   bootstrap:
     servers: localhost:9092
 ---

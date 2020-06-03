@@ -9,11 +9,11 @@ import io.micronaut.configuration.kafka.annotation.Topic;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@KafkaListener(CUSTOMER_TOPIC)
+@KafkaListener("customer-consumer")
 public class CustomerConsumerKafka {
 
-  @Topic("customer-management")
+  @Topic(CUSTOMER_TOPIC)
   public void receiveCustomer(@KafkaKey String key, Customer customer) {
-    log.info("Got from number 1 {} with key {}", customer.getFullName(), key);
+    log.info("CustomerConsumerKafka::receiveCustomer got customer  {} with key {}", customer.getFullName(), key);
   }
 }

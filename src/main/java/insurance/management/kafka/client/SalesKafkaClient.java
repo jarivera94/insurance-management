@@ -1,16 +1,17 @@
 package insurance.management.kafka.client;
 
-import insurance.management.common.TopicsNames;
-import insurance.management.dto.domain.Insurance;
+import static insurance.management.common.TopicsNames.SALES_TOPIC;
+
+import insurance.management.dto.domain.Sale;
 import io.micronaut.configuration.kafka.annotation.KafkaClient;
 import io.micronaut.configuration.kafka.annotation.KafkaKey;
 import io.micronaut.configuration.kafka.annotation.Topic;
 import io.micronaut.messaging.annotation.Body;
 import io.reactivex.Single;
 
-@KafkaClient("insurance-producer")
-public interface InsuranceKafkaClient {
+@KafkaClient("sales-producer")
+public interface SalesKafkaClient {
 
-  @Topic(TopicsNames.INSURANCE_TOPIC)
-  Single<Insurance>sendInsurance(@KafkaKey String key , @Body Insurance body);
+  @Topic(SALES_TOPIC)
+  Single<Sale> sendSale(@KafkaKey String key, @Body Sale body);
 }

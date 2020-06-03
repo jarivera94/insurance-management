@@ -1,4 +1,4 @@
-package insurance.management.dto.input;
+package insurance.management.dto.service.inputRequest;
 
 import io.micronaut.validation.Validated;
 import java.io.Serializable;

@@ -5,10 +5,13 @@ import static insurance.management.common.MaterializedOutputNames.INSURANCES_GLO
 
 import insurance.management.dto.domain.Customer;
 import insurance.management.dto.domain.Insurance;
-import insurance.management.dto.input.CreateCustomerInput;
-import insurance.management.dto.input.CreateInsuranceInput;
+import insurance.management.dto.domain.Sale;
+import insurance.management.dto.service.inputRequest.CreateCustomerInput;
+import insurance.management.dto.service.inputRequest.CreateInsuranceInput;
+import insurance.management.dto.service.inputRequest.CreateSalesInput;
 import insurance.management.kafka.client.CustomerKafkaClient;
 import insurance.management.kafka.client.InsuranceKafkaClient;
+import insurance.management.kafka.client.SalesKafkaClient;
 import insurance.management.service.graphql.GraphQLService;
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLMutation;
@@ -17,6 +20,7 @@ import io.leangen.graphql.annotations.GraphQLQuery;
 import io.micronaut.validation.Validated;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +38,16 @@ public class InsuranceManagementService {
   private final InsuranceKafkaClient insuranceKafkaClient;
   private final CustomerKafkaClient customerKafkaClient;
   private final KafkaStreams kafkaStreams;
+  private final SalesKafkaClient salesKafkaClient;
 
   public InsuranceManagementService(
       InsuranceKafkaClient insuranceKafkaClient,
-      CustomerKafkaClient customerKafkaClient,
-      KafkaStreams kafkaStreams) {
+      CustomerKafkaClient customerKafkaClient, KafkaStreams kafkaStreams,
+      SalesKafkaClient salesKafkaClient) {
     this.insuranceKafkaClient = insuranceKafkaClient;
     this.customerKafkaClient = customerKafkaClient;
     this.kafkaStreams = kafkaStreams;
+    this.salesKafkaClient = salesKafkaClient;
   }
 
   private static final Function<Customer, String> CREATE_KEY_CUSTOMER =
@@ -104,6 +110,20 @@ public class InsuranceManagementService {
         .subscribe();
 
     return customer;
+  }
+
+  @GraphQLMutation(name = "createSale")
+  public Sale createSale(@GraphQLArgument(name ="sale")CreateSalesInput createSalesInput){
+
+    Sale sale = Sale.builder()
+        .customerId(createSalesInput.getCustomerId())
+        .insuranceId(createSalesInput.getInsuranceId())
+        .build();
+
+    salesKafkaClient.sendSale(UUID.randomUUID().toString(), sale)
+        .subscribe();
+
+    return sale;
   }
 
   @GraphQLQuery(name = "retrieveInsurances")

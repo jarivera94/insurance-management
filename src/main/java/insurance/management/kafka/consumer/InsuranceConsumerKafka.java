@@ -15,6 +15,6 @@ public class InsuranceConsumerKafka {
   @Topic(INSURANCE_TOPIC)
   public void receiveInsurance(
       @KafkaKey String key, Insurance insuranceSingle) {
-    log.info("Got {} with key {}", insuranceSingle.getInsuranceName(), key);
+    log.info("InsuranceConsumerKafka::receiveInsurance got insurance {} with key {}", insuranceSingle.getInsuranceName(), key);
   }
 }

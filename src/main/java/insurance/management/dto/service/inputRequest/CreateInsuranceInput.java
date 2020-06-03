@@ -1,4 +1,4 @@
-package insurance.management.dto.input;
+package insurance.management.dto.service.inputRequest;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
