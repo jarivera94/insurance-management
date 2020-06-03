@@ -10,7 +10,7 @@ import io.micronaut.messaging.annotation.Body;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@KafkaListener("sale-consumer")
+@KafkaListener(groupId = "sale-consumer", pollTimeout = "500ms")
 public class SaleConsumerKafka {
 
   @Topic(SALES_TOPIC)

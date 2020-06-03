@@ -9,10 +9,11 @@ kafka:
       retries: 5
     customer-producer:
       retries: 5
-    consumers:
-      insurance-consumer:
-      customer-consumer:
-      sale-consumer:
+  consumers:
+    sale-consumer:
+      session:
+        timeout:
+          ms: 30000
   streams:
     insurance-all-stream:
       client.id: insurances-managemet-client

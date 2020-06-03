@@ -20,6 +20,7 @@ import io.micronaut.context.annotation.Factory;
 import java.util.Properties;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -32,6 +33,7 @@ import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 
+@Slf4j
 @Factory
 public class InsuranceStream {
 
@@ -68,10 +70,11 @@ public class InsuranceStream {
     KStream<String, Sale> streamSales =
         builder.stream(SALES_TOPIC, Consumed.with(Serdes.String(), saleSerde));
 
+    streamSales.foreach((key, value) -> log.info("InsuranceStream viewInsurances key {} with value {}", key, value));
     KStream<String, SaleCustomer> streamSalesCustomer =
         streamSales.join(
             globalTableCustomer,
-            (saleId, sale) -> sale.getInsuranceId(),
+            (saleId, sale) -> sale.getCustomerId(),
             (sales, customer) -> SaleCustomer.builder().sale(sales).customer(customer).build());
 
     KStream<String, SaleDetail> streamSalesCustomerDetail =
