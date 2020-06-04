@@ -52,6 +52,7 @@ public class InsuranceStream {
     Serde<Customer> customerSerde = new Jackson2Serde<>(OBJECT_MAPPER, Customer.class);
     Serde<Sale> saleSerde = new Jackson2Serde<>(OBJECT_MAPPER, Sale.class);
     Serde<SaleDetail> saleDetailSerde = new Jackson2Serde<>(OBJECT_MAPPER, SaleDetail.class);
+
     final GlobalKTable<String, Insurance> globalTableInsurance =
         builder.globalTable(
             INSURANCE_TOPIC,
@@ -70,7 +71,6 @@ public class InsuranceStream {
     KStream<String, Sale> streamSales =
         builder.stream(SALES_TOPIC, Consumed.with(Serdes.String(), saleSerde));
 
-    streamSales.foreach((key, value) -> log.info("InsuranceStream viewInsurances key {} with value {}", key, value));
     KStream<String, SaleCustomer> streamSalesCustomer =
         streamSales.join(
             globalTableCustomer,
